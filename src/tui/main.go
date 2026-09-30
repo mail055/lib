@@ -6,6 +6,9 @@ func TUIMAIN() {
 	initDB()
 	defer db.Close()
 
+	// Handle UI Initialisation and Update Logic
+	initUI()
+	updateUI()
 	if err := app.
 		SetRoot(page, true).
 		SetFocus(page).

@@ -24,4 +24,9 @@ type Content struct {
 	flex      *tview.Flex
 	albumInfo *tview.TextView
 	songList  *tview.List
+type Album struct {
+	ID      string
+	Title   string
+	Artists string
+}
 }
