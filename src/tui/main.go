@@ -1,7 +1,6 @@
 package tui
 
 func TUIMAIN() {
-	initUI()
 	// Manage Database Initialisation
 	initDB()
 	defer db.Close()
@@ -9,6 +8,8 @@ func TUIMAIN() {
 	// Handle UI Initialisation and Update Logic
 	initUI()
 	updateUI()
+
+	// Start the application
 	if err := app.
 		SetRoot(page, true).
 		SetFocus(page).

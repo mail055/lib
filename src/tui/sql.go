@@ -61,3 +61,43 @@ func AlbumsQuery() ([]Album, error) {
 	// Returns the list of albums if all error checking passes
 	return albums, nil
 }
+
+func TracksQuery(albumID string) ([]Track, error) {
+	var tracks []Track
+
+	// Creates a query that gets every Track ID, Track Name, and Artist Name(s)
+	query := `
+	SELECT
+		tr.track_id,
+		tr.track_name,
+		GROUP_CONCAT(ar.artist_name, ', ') AS artists
+	FROM tracks AS tr
+	JOIN artist_tracks AS atr ON tr.track_id = atr.track_id
+	JOIN artists AS ar ON atr.artist_id = ar.artist_id
+	WHERE tr.album_id = ?
+	GROUP BY tr.track_id, tr.track_name;`
+
+	// Performs the query on the database
+	rows, err := db.Query(query, albumID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Receives the query response and assigns variables to them
+	for rows.Next() {
+		var nextTrack Track
+		if err := rows.Scan(&nextTrack.ID, &nextTrack.Title, &nextTrack.Artists); err != nil {
+			return nil, err
+		}
+		tracks = append(tracks, nextTrack)
+	}
+
+	// Checks for any hidden errors
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// Returns the list of tracks if all error checking passes
+	return tracks, nil
+}

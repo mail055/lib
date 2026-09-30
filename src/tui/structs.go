@@ -1,6 +1,5 @@
 package tui
 
-import "github.com/rivo/tview"
 import (
 	"database/sql"
 
@@ -13,6 +12,7 @@ var page *tview.Flex
 var sidebar Sidebar
 var content Content
 var db *sql.DB
+var albumIDs []string
 
 type Sidebar struct {
 	flex      *tview.Flex
@@ -23,10 +23,17 @@ type Sidebar struct {
 type Content struct {
 	flex      *tview.Flex
 	albumInfo *tview.TextView
-	songList  *tview.List
+	trackList *tview.List
+}
+
 type Album struct {
 	ID      string
 	Title   string
 	Artists string
 }
+
+type Track struct {
+	ID      string
+	Title   string
+	Artists string
 }

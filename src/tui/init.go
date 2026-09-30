@@ -3,7 +3,8 @@ package tui
 import "github.com/rivo/tview"
 
 func initUI() {
-	app = tview.NewApplication()
+	app = tview.NewApplication().
+		EnableMouse(true)
 	page = tview.NewFlex().
 		SetDirection(tview.FlexColumn)
 
@@ -20,6 +21,11 @@ func (sb *Sidebar) initSidebar() {
 	sb.albumList.SetTitle("Album List").
 		SetBorder(true)
 
+	sb.albumList.SetChangedFunc(func(index int, _ string, _ string, _ rune) {
+		currentAlbumID := albumIDs[index]
+		content.refreshSongList(currentAlbumID)
+	})
+
 	sb.flex = tview.NewFlex().
 		SetDirection(tview.FlexRow)
 	sb.flex.
@@ -34,15 +40,15 @@ func (ct *Content) initContent() {
 	ct.albumInfo.SetTitle("Album Info").
 		SetBorder(true)
 
-	ct.songList = tview.NewList()
-	ct.songList.SetTitle("Songs").
+	ct.trackList = tview.NewList()
+	ct.trackList.SetTitle("Songs").
 		SetBorder(true)
 
 	ct.flex = tview.NewFlex().
 		SetDirection(tview.FlexRow)
 	ct.flex.
 		AddItem(ct.albumInfo, 0, 40, false).
-		AddItem(ct.songList, 0, 60, true)
+		AddItem(ct.trackList, 0, 60, true)
 
 	page.AddItem(ct.flex, 0, 70, true)
 }
