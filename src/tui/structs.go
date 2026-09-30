@@ -37,3 +37,14 @@ type Track struct {
 	Title   string
 	Artists string
 }
+
+type AlbumInfo struct {
+	ID          string
+	Title       string
+	Artists     string
+	TotalTracks int
+	DurationMS  int
+	URL         string
+	ImageURL    string
+	ReleaseDate string
+}

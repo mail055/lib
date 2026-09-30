@@ -24,6 +24,7 @@ func (sb *Sidebar) initSidebar() {
 	sb.albumList.SetChangedFunc(func(index int, _ string, _ string, _ rune) {
 		currentAlbumID := albumIDs[index]
 		content.refreshSongList(currentAlbumID)
+		content.refreshAlbumInfo(currentAlbumID)
 	})
 
 	sb.flex = tview.NewFlex().

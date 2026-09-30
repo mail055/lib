@@ -101,3 +101,48 @@ func TracksQuery(albumID string) ([]Track, error) {
 	// Returns the list of tracks if all error checking passes
 	return tracks, nil
 }
+
+func AlbumInfoQuery(albumID string) (*AlbumInfo, error) {
+	var info AlbumInfo
+
+	// Creates a query that gets all the album info
+	query := `
+    SELECT 
+        al.album_id,
+        al.album_name,
+        GROUP_CONCAT(ar.artist_name, ', ') AS artists,
+    	al.total_tracks,
+    	al.duration_ms,
+        al.album_url,
+        al.album_image,
+    	al.release_date
+    FROM albums AS al
+    JOIN album_artists AS aa ON al.album_id = aa.album_id
+    JOIN artists AS ar ON aa.artist_id = ar.artist_id
+    WHERE al.album_id = ?
+    GROUP BY al.album_id, al.album_name;`
+
+	// Performs the query on the database
+	rows, err := db.Query(query, albumID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Receives the query response and assigns variables to them
+	for rows.Next() {
+		if err := rows.Scan(&info.ID, &info.Title, &info.Artists,
+			&info.TotalTracks, &info.DurationMS, &info.URL,
+			&info.ImageURL, &info.ReleaseDate); err != nil {
+			return nil, err
+		}
+	}
+
+	// Checks for any hidden errors
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// Returns the list of tracks if all error checking passes
+	return &info, nil
+}
