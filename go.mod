@@ -7,6 +7,7 @@ require (
 	github.com/gdamore/tcell/v2 v2.13.10 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
 	github.com/mattn/go-runewidth v0.0.30 // indirect
+	github.com/mattn/go-sqlite3 v1.14.52 // indirect
 	github.com/rivo/tview v0.42.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	golang.org/x/sys v0.48.0 // indirect
