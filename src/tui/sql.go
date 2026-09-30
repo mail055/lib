@@ -75,7 +75,8 @@ func TracksQuery(albumID string) ([]Track, error) {
 	JOIN artist_tracks AS atr ON tr.track_id = atr.track_id
 	JOIN artists AS ar ON atr.artist_id = ar.artist_id
 	WHERE tr.album_id = ?
-	GROUP BY tr.track_id, tr.track_name;`
+	GROUP BY tr.track_id, tr.track_name
+	ORDER BY tr.track_number;` // Also allow for user adjustment
 
 	// Performs the query on the database
 	rows, err := db.Query(query, albumID)
