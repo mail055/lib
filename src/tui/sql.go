@@ -23,8 +23,8 @@ func initDB() {
 	}
 }
 
-func AlbumsQuery() ([]Album, error) {
-	var albums []Album
+func AlbumsQuery() ([]AlbumStruct, error) {
+	var albums []AlbumStruct
 	var whereClause string
 	var args []any
 
@@ -57,7 +57,7 @@ func AlbumsQuery() ([]Album, error) {
 
 	// Receives the query response and assigns variables to them
 	for rows.Next() {
-		var nextAlbum Album
+		var nextAlbum AlbumStruct
 		if err := rows.Scan(&nextAlbum.ID, &nextAlbum.Title, &nextAlbum.Artists); err != nil {
 			return nil, err
 		}
@@ -73,15 +73,17 @@ func AlbumsQuery() ([]Album, error) {
 	return albums, nil
 }
 
-func TracksQuery(albumID string) ([]Track, error) {
-	var tracks []Track
+func TracksQuery(albumID string) ([]TrackStruct, error) {
+	var tracks []TrackStruct
 
 	// Creates a query that gets every Track ID, Track Name, and Artist Name(s)
 	query := `
 	SELECT
 		tr.track_id,
+		tr.track_number,
 		tr.track_name,
-		GROUP_CONCAT(ar.artist_name, ', ') AS artists
+		GROUP_CONCAT(ar.artist_name, ', ') AS artists,
+		tr.duration_ms
 	FROM tracks AS tr
 	JOIN artist_tracks AS atr ON tr.track_id = atr.track_id
 	JOIN artists AS ar ON atr.artist_id = ar.artist_id
@@ -98,8 +100,10 @@ func TracksQuery(albumID string) ([]Track, error) {
 
 	// Receives the query response and assigns variables to them
 	for rows.Next() {
-		var nextTrack Track
-		if err := rows.Scan(&nextTrack.ID, &nextTrack.Title, &nextTrack.Artists); err != nil {
+		var nextTrack TrackStruct
+		if err := rows.Scan(&nextTrack.ID,
+			&nextTrack.TrackNumber, &nextTrack.Title,
+			&nextTrack.Artists, &nextTrack.DurationMS); err != nil {
 			return nil, err
 		}
 		tracks = append(tracks, nextTrack)
@@ -114,8 +118,8 @@ func TracksQuery(albumID string) ([]Track, error) {
 	return tracks, nil
 }
 
-func AlbumInfoQuery(albumID string) (*AlbumInfo, error) {
-	var info AlbumInfo
+func AlbumInfoQuery(albumID string) (*AlbumInfoStruct, error) {
+	var info AlbumInfoStruct
 
 	// Creates a query that gets all the album info
 	query := `
@@ -123,6 +127,7 @@ func AlbumInfoQuery(albumID string) (*AlbumInfo, error) {
         al.album_id,
         al.album_name,
         GROUP_CONCAT(ar.artist_name, ', ') AS artists,
+        al.album_type,
     	al.total_tracks,
     	al.duration_ms,
         al.album_url,
@@ -144,8 +149,8 @@ func AlbumInfoQuery(albumID string) (*AlbumInfo, error) {
 	// Receives the query response and assigns variables to them
 	for rows.Next() {
 		if err := rows.Scan(&info.ID, &info.Title, &info.Artists,
-			&info.TotalTracks, &info.DurationMS, &info.URL,
-			&info.ImageURL, &info.ReleaseDate); err != nil {
+			&info.AlbumType, &info.TotalTracks, &info.DurationMS,
+			&info.URL, &info.ImageURL, &info.ReleaseDate); err != nil {
 			return nil, err
 		}
 	}

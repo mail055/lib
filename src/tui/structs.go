@@ -23,25 +23,34 @@ type Sidebar struct {
 
 type Content struct {
 	flex      *tview.Flex
-	albumInfo *tview.TextView
+	albumInfo AlbumInfo
 	trackList *tview.List
 }
 
-type Album struct {
-	ID      string
-	Title   string
-	Artists string
-}
-
-type Track struct {
-	ID      string
-	Title   string
-	Artists string
-}
-
 type AlbumInfo struct {
+	flex  *tview.Flex
+	cover *tview.TextView
+	text  *tview.TextView
+}
+
+type AlbumStruct struct {
+	ID      string
+	Title   string
+	Artists string
+}
+
+type TrackStruct struct {
+	ID          string
+	TrackNumber int
+	Title       string
+	Artists     string
+	DurationMS  int
+}
+
+type AlbumInfoStruct struct {
 	ID          string
 	Title       string
+	AlbumType   string
 	Artists     string
 	TotalTracks int
 	DurationMS  int
