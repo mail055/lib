@@ -13,6 +13,7 @@ var sidebar Sidebar
 var content Content
 var db *sql.DB
 var albumIDs []string
+var searchQuery = ""
 
 type Sidebar struct {
 	flex      *tview.Flex

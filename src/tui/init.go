@@ -13,19 +13,8 @@ func initUI() {
 }
 
 func (sb *Sidebar) initSidebar() {
-	sb.searchBar = tview.NewInputField()
-	sb.searchBar.SetTitle("Search Bar").
-		SetBorder(true)
-
-	sb.albumList = tview.NewList()
-	sb.albumList.SetTitle("Album List").
-		SetBorder(true)
-
-	sb.albumList.SetChangedFunc(func(index int, _ string, _ string, _ rune) {
-		currentAlbumID := albumIDs[index]
-		content.refreshSongList(currentAlbumID)
-		content.refreshAlbumInfo(currentAlbumID)
-	})
+	sb.initSearchBar()
+	sb.initAlbumList()
 
 	sb.flex = tview.NewFlex().
 		SetDirection(tview.FlexRow)
@@ -36,14 +25,32 @@ func (sb *Sidebar) initSidebar() {
 	page.AddItem(sb.flex, 0, 30, true)
 }
 
-func (ct *Content) initContent() {
-	ct.albumInfo = tview.NewTextView()
-	ct.albumInfo.SetTitle("Album Info").
+func (sb *Sidebar) initSearchBar() {
+	sb.searchBar = tview.NewInputField()
+	sb.searchBar.SetTitle("Search Bar").
 		SetBorder(true)
 
-	ct.trackList = tview.NewList()
-	ct.trackList.SetTitle("Songs").
+	sb.searchBar.SetChangedFunc(func(text string) {
+		searchQuery = "%" + sb.searchBar.GetText() + "%"
+		sb.refreshAlbumList()
+	})
+}
+
+func (sb *Sidebar) initAlbumList() {
+	sb.albumList = tview.NewList()
+	sb.albumList.SetTitle("Album List").
 		SetBorder(true)
+
+	sb.albumList.SetChangedFunc(func(index int, _ string, _ string, _ rune) {
+		currentAlbumID := albumIDs[index]
+		content.refreshTrackList(currentAlbumID)
+		content.refreshAlbumInfo(currentAlbumID)
+	})
+}
+
+func (ct *Content) initContent() {
+	ct.initAlbumInfo()
+	ct.initTrackList()
 
 	ct.flex = tview.NewFlex().
 		SetDirection(tview.FlexRow)
@@ -52,4 +59,16 @@ func (ct *Content) initContent() {
 		AddItem(ct.trackList, 0, 60, true)
 
 	page.AddItem(ct.flex, 0, 70, true)
+}
+
+func (ct *Content) initAlbumInfo() {
+	ct.albumInfo = tview.NewTextView()
+	ct.albumInfo.SetTitle("Album Info").
+		SetBorder(true)
+}
+
+func (ct *Content) initTrackList() {
+	ct.trackList = tview.NewList()
+	ct.trackList.SetTitle("Songs").
+		SetBorder(true)
 }

@@ -2,6 +2,7 @@ package tui
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -24,9 +25,18 @@ func initDB() {
 
 func AlbumsQuery() ([]Album, error) {
 	var albums []Album
+	var whereClause string
+	var args []any
+
+	// Creates a WHERE clause if the searchQuery is not empty
+	if searchQuery != "" {
+		whereClause = "WHERE al.album_name LIKE ? OR ar.artist_name LIKE ?"
+		searchTerm := "%" + searchQuery + "%"
+		args = []any{searchTerm, searchTerm}
+	}
 
 	// Creates a query that gets every Album ID, Album Name, and Artist Name(s)
-	query := `
+	query := fmt.Sprintf(`
     SELECT 
         al.album_id,
         al.album_name,
@@ -34,11 +44,12 @@ func AlbumsQuery() ([]Album, error) {
     FROM albums AS al
     JOIN album_artists AS aa ON al.album_id = aa.album_id
     JOIN artists AS ar ON aa.artist_id = ar.artist_id
+    %s
     GROUP BY al.album_id, al.album_name
-    ORDER BY al.album_name;` // Likely allow for user adjustment in future (e.g. ID, Artist, Release Date, etc.)
+    ORDER BY al.album_name;`, whereClause) // Likely allow for user adjustment in future (e.g. ID, Artist, Release Date, etc.)
 
 	// Performs the query on the database
-	rows, err := db.Query(query)
+	rows, err := db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}

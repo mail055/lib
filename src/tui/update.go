@@ -26,7 +26,7 @@ func (sb *Sidebar) refreshAlbumList() {
 	}
 }
 
-func (ct *Content) refreshSongList(albumID string) {
+func (ct *Content) refreshTrackList(albumID string) {
 	ct.trackList.Clear()
 
 	// Requests for the list of tracks
@@ -66,7 +66,7 @@ Total Tracks - %d | Album Length - %s | Release Date - %s
 Album URL   - %s
 Album Cover - %s
 Album ID    - %s`,
-		title, artists, totalTracks, duration, releaseDate, image, url, ID)
+		title, artists, totalTracks, duration, releaseDate, url, image, ID)
 
 	// Applies the info to albumInfo
 	ct.albumInfo.SetText(infoText)
