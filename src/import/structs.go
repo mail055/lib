@@ -1,5 +1,9 @@
 package _import
 
+import "database/sql"
+
+var tx *sql.Tx
+
 type AlbumJSON struct {
 	AlbumType            string            `json:"album_type"`
 	TotalTracks          int               `json:"total_tracks"`
