@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -154,6 +155,8 @@ func AlbumInfoQuery(albumID string) (*AlbumInfoStruct, error) {
 			&info.URL, &info.ImageURL, &info.ReleaseDate); err != nil {
 			return nil, err
 		}
+		info.AlbumType = strings.Title(info.AlbumType)
+		info.Duration = parseDuration(info.DurationMS)
 	}
 
 	// Checks for any hidden errors

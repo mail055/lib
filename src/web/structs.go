@@ -11,6 +11,7 @@ var tmpls *template.Template
 type PageData struct {
 	Albums      []AlbumStruct
 	SearchQuery string
+	AlbumInfo   *AlbumInfoStruct
 }
 
 type AlbumStruct struct {
@@ -35,6 +36,7 @@ type AlbumInfoStruct struct {
 	Artists     string
 	TotalTracks int
 	DurationMS  int
+	Duration    string
 	URL         string
 	ImageURL    string
 	ReleaseDate string

@@ -27,18 +27,22 @@
         </div>
     </div>
     <div class="content">
+        {{ with .AlbumInfo }}
         <div class="metadata">
             <div class="album-cover">
-                <img src="https://i.scdn.co/image/ab67616d0000b273de3c04b5fc750b68899b20a9" alt="In Rainbows">
+                <img src="{{ .ImageURL }}" alt=".Title">
             </div>
             <div class="album-info">
-                <div class="album-type">Album</div>
-                <div class="album-title">In Rainbows</div>
-                <div class="album-artist">Radiohead • 2007 • 10 songs • 42 min 38 sec</div>
+                <div class="album-type">{{ .AlbumType }}</div>
+                <div class="album-title">{{ .Title }}</div>
+                <div class="album-artist">{{ .Artists }} • {{ .ReleaseDate }} • {{ .TotalTracks }} songs • {{ .Duration }}</div>
             </div>
         </div>
+        {{ else }}
+        <p>No Album Selected</p>
+        {{ end }}
         <div class="tracks">
-            
+
         </div>
     </div>
 </body>
