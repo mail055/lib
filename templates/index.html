@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lib</title>
+    <link rel="icon" href="../static/favicon.ico"/>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <input type="text" class="search-bar" placeholder="Search Albums">
+        <hr class="separator">
+        <div class="album-list">
+            {{ range .Albums }}
+                <a href="/album?id={{ .ID }}" class="album-item">
+                    <div class="album-cover">
+                        <img src="{{ .ImageURL }}" alt="{{ .Title }}">
+                    </div>
+                    <div class="album-details">
+                        <div class="album-title">{{ .Title }}</div>
+                        <div class="album-artist">{{ .Artists }}</div>
+                    </div>
+                </a>
+            {{ else }}
+                <p class="no-albums">No albums found</p>
+            {{ end }}
+        </div>
+    </div>
+</body>
+</html>
