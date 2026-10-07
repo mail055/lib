@@ -14,6 +14,17 @@ body {
     gap: 16px;
 }
 
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: 0.15s ease;
+}
+
+a:hover {
+    transition: 0.25s ease;
+    opacity: 0.8;
+}
+
 .sidebar {
     height: 100%;
     min-width: 30%;
@@ -55,11 +66,12 @@ body {
     gap: 12px;
     padding: 8px 12px;
     border-radius: 8px;
-    transition: background-color 0.25s ease;
+    transition: 0.25s ease;
 }
 
 .album-item:hover {
     background-color: #090909;
+    transition: 0.25s ease;
 }
 
 .album-item .album-cover {
@@ -88,16 +100,19 @@ body {
 
 .album-item .album-title {
     font-size: 14px;
-    font-family: JetBrains, sans-serif;
     margin: 0;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-.album-item .album-artist {
+.album-list .album-item .album-artist {
     font-size: 13px;
     margin: 4px 0;
     color: #c7cac7;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .content {
@@ -131,6 +146,7 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    flex-shrink: 0;
 }
 .metadata .album-cover img {
     width: 100%;
@@ -153,18 +169,77 @@ body {
     font-size: min(4cqw, 20cqh);
     font-weight: bold;
 }
-.metadata .album-artist {
+
+.metadata .album-details {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.metadata .album-details .album-artist {
     font-size: 16px;
-    color: #c7cac7;
+    font-weight: bold;
 }
 
 .tracks {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     height: 60%;
 
     background-color: #121212;
     padding: 16px;
     border-radius: 8px;
     outline: #383838 1px solid;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.tracks-header {
+    display: grid;
+    grid-template-columns: 12px 2fr 1.5fr 60px;
+    gap: 16px;
+    align-items: center;
+    border-radius: 8px;
+    padding: 0 16px 0 16px;
+    text-align: left;
+}
+
+.track {
+    display: grid;
+    grid-template-columns: 12px 2fr 1.5fr 60px;
+    gap: 16px;
+    align-items: center;
+    padding: 14px;
+    border-radius: 8px;
+
+    transition: 0.15s ease;
+}
+
+.track:hover {
+    background-color: #202020;
+    transition: background-color 0.25s ease;
+}
+
+.track-number {
+    color: #c7cac7;
+    text-align: right;
+}
+
+.track-title {
+    font-weight: bold;
+}
+
+.track-artist {
+    color: #aaaaaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-duration {
+    color: #888888;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
 }

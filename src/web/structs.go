@@ -12,6 +12,7 @@ type PageData struct {
 	Albums      []AlbumStruct
 	SearchQuery string
 	AlbumInfo   *AlbumInfoStruct
+	Tracks      []TrackStruct
 }
 
 type AlbumStruct struct {
@@ -27,6 +28,7 @@ type TrackStruct struct {
 	Title       string
 	Artists     string
 	DurationMS  int
+	Duration    string
 }
 
 type AlbumInfoStruct struct {

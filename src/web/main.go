@@ -47,12 +47,23 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	albumInfo, err := AlbumInfoQuery(selectedAlbum)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tracks, err := TracksQuery(selectedAlbum)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	// Compile Data
 	data := PageData{
 		Albums:      albums,
 		SearchQuery: searchQuery,
 		AlbumInfo:   albumInfo,
+		Tracks:      tracks,
 	}
 
 	err = tmpls.ExecuteTemplate(w, "index.html", data)

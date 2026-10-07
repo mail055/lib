@@ -108,6 +108,7 @@ func TracksQuery(albumID string) ([]TrackStruct, error) {
 			&nextTrack.Artists, &nextTrack.DurationMS); err != nil {
 			return nil, err
 		}
+		nextTrack.Duration = formatTrackDuration(nextTrack.DurationMS)
 		tracks = append(tracks, nextTrack)
 	}
 
@@ -122,6 +123,10 @@ func TracksQuery(albumID string) ([]TrackStruct, error) {
 
 func AlbumInfoQuery(albumID string) (*AlbumInfoStruct, error) {
 	var info AlbumInfoStruct
+
+	if albumID == "" {
+		return nil, nil
+	}
 
 	// Creates a query that gets all the album info
 	query := `
@@ -156,7 +161,7 @@ func AlbumInfoQuery(albumID string) (*AlbumInfoStruct, error) {
 			return nil, err
 		}
 		info.AlbumType = strings.Title(info.AlbumType)
-		info.Duration = parseDuration(info.DurationMS)
+		info.Duration = formatAlbumDuration(info.DurationMS)
 	}
 
 	// Checks for any hidden errors
