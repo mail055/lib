@@ -16,7 +16,7 @@ body {
 
 .sidebar {
     height: 100%;
-    width: 30%;
+    min-width: 30%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -44,13 +44,11 @@ body {
     margin: 16px 0;
 }
 
-a.album-item {
+/* ALBUM ITEMS */
+.album-item {
     text-decoration: none;
     color: inherit;
-    display: block;
-}
 
-a.album-item, .album-item {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -64,7 +62,7 @@ a.album-item, .album-item {
     background-color: #090909;
 }
 
-.album-cover {
+.album-item .album-cover {
     width: 48px;
     height: 48px;
     flex-shrink: 0;
@@ -73,14 +71,14 @@ a.album-item, .album-item {
     background-color: #090909;
 }
 
-.album-cover img {
+.album-item .album-cover img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
 
-.album-details {
+.album-item .album-details {
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -88,16 +86,85 @@ a.album-item, .album-item {
     flex: 1;
 }
 
-.album-title {
+.album-item .album-title {
     font-size: 14px;
     font-family: JetBrains, sans-serif;
     margin: 0;
     text-overflow: ellipsis;
 }
 
-.album-artist {
+.album-item .album-artist {
     font-size: 13px;
     margin: 4px 0;
     color: #c7cac7;
     text-overflow: ellipsis;
+}
+
+.content {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.metadata {
+    display: flex;
+    flex-direction: row;
+    height: 40%;
+
+    background-color: #121212;
+    padding: 16px;
+    border-radius: 8px;
+    outline: #383838 1px solid;
+}
+
+.metadata .album-cover {
+    max-height: 100%;
+    max-width: 40%;
+    padding: 16px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.metadata .album-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.metadata .album-info {
+    display: flex;
+    flex-direction: column;
+    align-self: end;
+    padding: 16px;
+}
+.metadata .album-type {
+    font-size: 16px;
+}
+
+.metadata .album-title {
+    font-size: min(4cqw, 20cqh);
+    font-weight: bold;
+}
+.metadata .album-artist {
+    font-size: 16px;
+    color: #c7cac7;
+}
+
+.tracks {
+    display: flex;
+    flex-direction: row;
+    height: 60%;
+
+    background-color: #121212;
+    padding: 16px;
+    border-radius: 8px;
+    outline: #383838 1px solid;
 }
