@@ -18,6 +18,7 @@ func Main() {
 		log.Fatalf("Error parsing templates: %v", err)
 	}
 
+	// Initialise Multiplexer
 	mux := http.NewServeMux()
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	mux.HandleFunc("GET /{$}", handleIndex)
@@ -37,21 +38,25 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get variables from url
 	searchQuery := r.URL.Query().Get("q")
 	selectedAlbum := r.URL.Query().Get("id")
 
+	// Get Albums
 	albums, err := AlbumsQuery(searchQuery)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// Get Album Info
 	albumInfo, err := AlbumInfoQuery(selectedAlbum)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// Get Tracks
 	tracks, err := TracksQuery(selectedAlbum)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -66,6 +71,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		Tracks:      tracks,
 	}
 
+	// Handle Get Requests
 	if r.Header.Get("HX-Request") == "true" {
 		switch r.Header.Get("HX-Target") {
 		case "album-results":

@@ -7,6 +7,7 @@ func formatAlbumDuration(durationMS int) string {
 
 	hours, minutes, seconds := parseDuration(durationMS)
 
+	// Create string in format H hr M min or M min S sec
 	if hours >= 1 {
 		duration = fmt.Sprintf("%d hr %d min", hours, minutes)
 	} else {
@@ -20,8 +21,9 @@ func formatTrackDuration(durationMS int) string {
 
 	hours, minutes, seconds := parseDuration(durationMS)
 
+	// Create string in format HH:MM:SS or MM:SS
 	if hours >= 1 {
-		duration = fmt.Sprintf("%d:%d:%d", hours, minutes, seconds)
+		duration = fmt.Sprintf("%d:%02d:%02d", hours, minutes, seconds)
 	} else {
 		duration = fmt.Sprintf("%d:%02d", minutes, seconds)
 	}
@@ -29,10 +31,12 @@ func formatTrackDuration(durationMS int) string {
 }
 
 func parseDuration(durationMS int) (int, int, int) {
+	// Declare hours, minutes, and seconds
 	var hours, minutes, seconds int
 	minutes = (durationMS / 1000) / 60
 	seconds = (durationMS / 1000) % 60
 
+	// Evaluate hours if minutes greater than or equal to 60
 	if minutes >= 60 {
 		hours = minutes / 60
 		minutes = minutes % 60
