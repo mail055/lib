@@ -29,6 +29,9 @@ type TrackStruct struct {
 	Artists     string
 	DurationMS  int
 	Duration    string
+	TrackURL    string
+	DiscNumber  int
+	Explicit    int
 }
 
 type AlbumInfoStruct struct {

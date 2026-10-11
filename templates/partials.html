@@ -1,0 +1,104 @@
+
+{{ define "album-results" }}
+    <div class="album-list">
+        {{ range .Albums }}
+        <a href="/" class="album-item"
+            hx-get="/"
+            hx-vals='{"id": "{{ .ID }}"}'
+            hx-target="#content"
+            hx-push-url="true"
+            hx-include="[name='q']">
+            <div class="album-cover">
+                <img src="{{ .ImageURL }}" alt="{{ .Title }}">
+            </div>
+            <div class="album-details">
+                <div class="album-title">{{ .Title }}</div>
+                <div class="album-artist">{{ .Artists }}</div>
+            </div>
+        </a>
+
+        {{ else }}
+
+        <p class="no-albums">No albums found</p>
+
+        {{ end }}
+
+    </div>
+{{ end }}
+
+{{ define "content" }}
+
+    {{ with .AlbumInfo }}
+
+    <div class="metadata">
+        <div class="album-cover">
+            <img src="{{ .ImageURL }}" alt="{{ .Title }}">
+        </div>
+
+        <div class="album-info">
+            <div class="album-type">{{ .AlbumType }}</div>
+            <div class="album-title"><a href="{{ .URL }}" target="_blank" rel="noopener noreferrer">{{ .Title }}</a>
+            </div>
+
+            <div class="album-details">
+                <div class="album-artist">{{ .Artists }}</div>•
+                <div class="album-release-date">{{ .ReleaseDate }}</div>•
+                <div class="album-total-tracks">{{ .TotalTracks }} songs</div>•
+                <div class="album-duration">{{ .Duration}}</div>
+            </div>
+        </div>
+
+    </div>
+
+    {{ else }}
+
+    <div class="metadata">
+        <div class="album-info">
+            <div class="album-type"></div>
+            <div class="album-title">No Album Selected</div>
+            <div class="album-details">
+                <div class="album-artist">Please Select An Album</div>
+            </div>
+        </div>
+    </div>
+
+    {{ end }}
+
+    <div class="tracks">
+
+        <div class="tracks-header">
+            <div class="track-number">#</div>
+            <div class="track-title">Title</div>
+            <div class="track-artist">Artist</div>
+            <div class="track-duration">
+                <img  src="./static/clock.png" alt="duration">
+            </div>
+        </div>
+
+        <hr class="separator">
+
+        {{ range .Tracks }}
+
+        <a href="{{ .TrackURL }}" target="_blank" rel="noopener noreferrer">
+
+            <div class="track">
+                <div class="track-number">{{ .TrackNumber }}</div>
+                <div class="track-title">{{ .Title }}
+                    {{ if eq .Explicit 1 }}
+                    <img class="explicit" src="./static/explicit.png" alt="Explicit">
+                    {{ end }}
+                </div>
+                <div class="track-artist">{{ .Artists }}</div>
+                <div class="track-duration">{{ .Duration }}</div>
+            </div>
+
+        </a>
+
+        {{ else }}
+
+        <div class="track-title">No tracks found</div>
+
+        {{ end }}
+
+    </div>
+{{ end }}

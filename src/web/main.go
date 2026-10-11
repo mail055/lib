@@ -18,29 +18,29 @@ func Main() {
 		log.Fatalf("Error parsing templates: %v", err)
 	}
 
-	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
-
-	http.HandleFunc("/", handleIndex)
+	mux := http.NewServeMux()
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	mux.HandleFunc("GET /{$}", handleIndex)
+	mux.HandleFunc("GET /{id}", handleIndex)
 
 	// Runs the server
 	log.Println("Server running at http://localhost:8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatal(err)
 	}
 }
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	// Return error if an invalid address is found
-	if r.URL.Path != "/" && r.URL.Path != "/album" {
+	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
 
-	searchQuery := r.URL.Query().Get("id")
+	searchQuery := r.URL.Query().Get("q")
 	selectedAlbum := r.URL.Query().Get("id")
 
-	albums, err := AlbumsQuery("")
+	albums, err := AlbumsQuery(searchQuery)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -66,7 +66,19 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		Tracks:      tracks,
 	}
 
-	err = tmpls.ExecuteTemplate(w, "index.html", data)
+	if r.Header.Get("HX-Request") == "true" {
+		switch r.Header.Get("HX-Target") {
+		case "album-results":
+			err = tmpls.ExecuteTemplate(w, "album-results", data)
+		case "content":
+			err = tmpls.ExecuteTemplate(w, "content", data)
+		default:
+			err = tmpls.ExecuteTemplate(w, "index.html", data)
+		}
+	} else {
+		err = tmpls.ExecuteTemplate(w, "index.html", data)
+	}
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

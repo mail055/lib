@@ -41,13 +41,34 @@ a:hover {
 }
 
 .search-bar {
+    display: flex;
+    flex-direction: row;
+}
+
+.search-box {
     width: 100%;
     padding: 8px 12px;
-    background-color: #505050;
-    border: #383838 1px solid;
+    background-color: #383838;
+    border: #767676 1px solid;
     color: #ffffff;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+.search-box:focus {
+    outline: none;
+}
+
+.search-icon {
+    margin-left: 2px;
+    background-color: #383838;
+    border-radius: 4px;
+    border: #767676 1px solid;
+}
+
+.search-icon img {
+    width: 80%;
+    margin: 10%;
 }
 
 .separator {
@@ -100,7 +121,6 @@ a:hover {
 
 .album-item .album-title {
     font-size: 14px;
-    margin: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -115,6 +135,16 @@ a:hover {
     overflow: hidden;
 }
 
+.total-albums {
+    flex-shrink: 0;
+    margin-top: auto;
+    opacity: 0.8;
+    text-align: center;
+    font-size: 14px;
+    padding: 12px;
+}
+
+/* Content */
 .content {
     height: 100%;
     width: 100%;
@@ -168,6 +198,7 @@ a:hover {
 .metadata .album-title {
     font-size: min(4cqw, 20cqh);
     font-weight: bold;
+    margin-bottom: 8px;
 }
 
 .metadata .album-details {
@@ -231,6 +262,13 @@ a:hover {
     font-weight: bold;
 }
 
+.track-title img.explicit {
+    height: 12px;
+    width: 12px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
 .track-artist {
     color: #aaaaaa;
     white-space: nowrap;
@@ -241,5 +279,10 @@ a:hover {
 .track-duration {
     color: #888888;
     text-align: right;
-    font-variant-numeric: tabular-nums;
+}
+
+.track-duration img {
+    height: 16px;
+    margin-right: 6px;
+    opacity: 0.6;
 }

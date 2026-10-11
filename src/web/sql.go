@@ -31,9 +31,9 @@ func AlbumsQuery(searchQuery string) ([]AlbumStruct, error) {
 
 	// Creates a WHERE clause if the searchQuery is not empty
 	if searchQuery != "" {
-		whereClause = "WHERE al.album_name LIKE ? OR ar.artist_name LIKE ? OR al.album_id LIKE ?"
+		whereClause = "WHERE al.album_name LIKE ? OR ar.artist_name LIKE ?"
 		searchTerm := "%" + searchQuery + "%"
-		args = []any{searchTerm, searchTerm, searchTerm}
+		args = []any{searchTerm, searchTerm}
 	}
 
 	// Creates a query that gets every Album ID, Album Name, and Artist Name(s)
@@ -85,7 +85,10 @@ func TracksQuery(albumID string) ([]TrackStruct, error) {
 		tr.track_number,
 		tr.track_name,
 		GROUP_CONCAT(ar.artist_name, ', ') AS artists,
-		tr.duration_ms
+		tr.duration_ms,
+		tr.track_url,
+		tr.disc_number,
+		tr.explicit
 	FROM tracks AS tr
 	JOIN artist_tracks AS atr ON tr.track_id = atr.track_id
 	JOIN artists AS ar ON atr.artist_id = ar.artist_id
@@ -105,7 +108,9 @@ func TracksQuery(albumID string) ([]TrackStruct, error) {
 		var nextTrack TrackStruct
 		if err := rows.Scan(&nextTrack.ID,
 			&nextTrack.TrackNumber, &nextTrack.Title,
-			&nextTrack.Artists, &nextTrack.DurationMS); err != nil {
+			&nextTrack.Artists, &nextTrack.DurationMS,
+			&nextTrack.TrackURL, &nextTrack.DiscNumber,
+			&nextTrack.Explicit); err != nil {
 			return nil, err
 		}
 		nextTrack.Duration = formatTrackDuration(nextTrack.DurationMS)
