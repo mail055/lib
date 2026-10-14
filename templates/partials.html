@@ -28,6 +28,27 @@
 
 {{ define "content" }}
 
+    <div class="toolbar">
+        <button class="add-button" onclick="document.getElementById('add-dialog').showModal()"><img src="./static/add.png" alt="Add Album"></button>
+
+        <dialog id="add-dialog">
+            <div class="add-text">Add Album</div>
+            <div class="help-text">1. Copy the desired Album Link<br>
+            2. Navigate <a href="https://www.unchainedmusic.io/tools/spotify-uri-finder/" target="_blank"><u>here</u></a> and paste the link<br>
+            3. Copy the outputted ID<br>
+            4. Paste the ID <a href="https://developer.spotify.com/documentation/web-api/reference/get-an-album" target="_blank"><u>here</u></a> and press "Try It"<br>
+            5. Copy the JSON response, paste it in the text area below</div>
+            <form hx-post="/import" hx-target="#add-message">
+                <textarea class="input" name="input" autocomplete=off placeholder="Paste the Spotify album JSON"></textarea>
+                <div class="buttons">
+                    <button class="cancel" type="cancel" onclick="this.closest('dialog').close()">Cancel</button>
+                    <button class="submit" type="submit">Add</button>
+                </div>
+            </form>
+            <div id="add-message"></div>
+        </dialog>
+    </div>
+
     {{ with .AlbumInfo }}
 
     <div class="metadata">

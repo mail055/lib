@@ -18,6 +18,9 @@
             search.focus();
             search.select();
         });
+        document.addEventListener("click", function (e) {
+            if (e.target.id === "add-dialog") e.target.close();
+        });
     </script>
 </head>
 

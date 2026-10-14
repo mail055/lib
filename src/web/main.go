@@ -23,6 +23,7 @@ func Main() {
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	mux.HandleFunc("GET /{$}", handleIndex)
 	mux.HandleFunc("GET /{id}", handleIndex)
+	mux.HandleFunc("POST /import", handleImport)
 
 	// Runs the server
 	log.Println("Server running at http://localhost:8080")
@@ -87,5 +88,21 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func handleImport(w http.ResponseWriter, r *http.Request) {
+	input := r.FormValue("input")
+
+	album, err := parseAlbumJSON(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = album.insertAlbumJSON()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
