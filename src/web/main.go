@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -93,19 +94,21 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleImport(w http.ResponseWriter, r *http.Request) {
+	var msg string
 	input := r.FormValue("input")
 
 	album, err := parseAlbumJSON(input)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		msg = fmt.Sprintf("Error parsing album JSON: %v", err)
+	} else if err = album.insertAlbumJSON(); err != nil {
+		msg = fmt.Sprintf("Error inserting album JSON: %v", err)
+	} else {
+		msg = fmt.Sprintf(`Album "%s" Successfully Imported`, album.Name)
 	}
 
-	err = album.insertAlbumJSON()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	value := fmt.Sprintf(`{"showNotification": "%s"}`, msg)
+	w.Header().Set("HX-Trigger", value)
+	return
 }
 
 func handleDelete(w http.ResponseWriter, r *http.Request) {

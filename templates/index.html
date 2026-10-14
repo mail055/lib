@@ -21,12 +21,17 @@
         document.addEventListener("click", function (e) {
             if (e.target.id === "add-dialog") e.target.close();
         });
+        document.addEventListener("showNotification", function (e) {
+            const notif = document.getElementById("notification");
+            notif.textContent = e.detail.value;
+            notif.classList.add("show");
+            setTimeout(() => notif.classList.remove("show"), 2500);
+        });
     </script>
 </head>
 
 <body>
     <div class="sidebar">
-
         <form class="search-bar"
               hx-get="/"
               hx-target="album-results"

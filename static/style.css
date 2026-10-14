@@ -443,6 +443,25 @@ a:hover {
     background-color: #4a2525;
 }
 
+.notification {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background-color: #202020;
+    color: #ffffff;
+    border: #383838 1px solid;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.notification:not(.show) {
+    display: none;
+}
+
 @keyframes fade-in {
     from { opacity: 0; }
     to   { opacity: 1; }
