@@ -351,3 +351,29 @@ func (t *TracksWrapper) insertTracks(albumID string) error {
 
 	return nil
 }
+
+func deleteAlbum(albumID string) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	queries := []string{
+		`DELETE FROM artist_tracks WHERE track_id IN (SELECT track_id FROM tracks WHERE album_id = ?)`,
+		`DELETE FROM tracks WHERE album_id = ?`,
+		`DELETE FROM album_artists WHERE album_id = ?`,
+		`DELETE FROM albums WHERE album_id = ?`,
+		`DELETE FROM artists
+			 WHERE artist_id NOT IN (SELECT artist_id FROM album_artists)
+			 AND artist_id NOT IN (SELECT artist_id FROM artist_tracks)`,
+	}
+
+	for _, query := range queries {
+		_, err = tx.Exec(query, albumID)
+		if err != nil {
+			return err
+		}
+	}
+	return tx.Commit()
+}

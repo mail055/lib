@@ -158,6 +158,7 @@ a:hover {
     display: flex;
     flex-direction: row;
     height: 40%;
+    position: relative;
 
     background-color: #121212;
     padding: 16px;
@@ -412,6 +413,34 @@ a:hover {
 .submit:hover {
     transition: 0.25s ease;
     scale: 1.03;
+}
+
+.delete-album {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3a1f1f;
+    border: #6b3535 1px solid;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.delete-album img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    opacity: 0.8;
+}
+
+.delete-album:hover {
+    background-color: #4a2525;
 }
 
 @keyframes fade-in {

@@ -24,6 +24,7 @@ func Main() {
 	mux.HandleFunc("GET /{$}", handleIndex)
 	mux.HandleFunc("GET /{id}", handleIndex)
 	mux.HandleFunc("POST /import", handleImport)
+	mux.HandleFunc("DELETE /album/{id}", handleDelete)
 
 	// Runs the server
 	log.Println("Server running at http://localhost:8080")
@@ -101,6 +102,16 @@ func handleImport(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = album.insertAlbumJSON()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func handleDelete(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	err := deleteAlbum(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

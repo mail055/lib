@@ -33,7 +33,7 @@
 
         <dialog id="add-dialog">
             <div class="add-text">Add Album</div>
-            <div class="help-text">1. Copy the desired Album Link<br>
+            <div class="help-text">1. Copy the desired Album Link from Spotify<br>
             2. Navigate <a href="https://www.unchainedmusic.io/tools/spotify-uri-finder/" target="_blank"><u>here</u></a> and paste the link<br>
             3. Copy the outputted ID<br>
             4. Paste the ID <a href="https://developer.spotify.com/documentation/web-api/reference/get-an-album" target="_blank"><u>here</u></a> and press "Try It"<br>
@@ -57,6 +57,12 @@
         </div>
 
         <div class="album-info">
+            <button class="delete-album" title="Delete album"
+                    hx-delete="/album/{{ .ID }}"
+                    hx-confirm="Remove {{ .Title }} from your library?"
+                    hx-on::after-request="if (event.detail.successful) window.location.href = '/'">
+                <img src="./static/delete.png" alt="Delete album">
+            </button>
             <div class="album-type">{{ .AlbumType }}</div>
             <div class="album-title"><a href="{{ .URL }}" target="_blank" rel="noopener noreferrer">{{ .Title }}</a>
             </div>
