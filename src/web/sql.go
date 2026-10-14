@@ -24,6 +24,26 @@ func initDB() {
 	if err = db.Ping(); err != nil {
 		log.Fatal(err)
 	}
+
+	if err = createDB(); err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+func createDB() error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	if _, err = tx.Exec(schema); err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func AlbumsQuery(searchQuery string) ([]AlbumStruct, error) {
@@ -183,24 +203,23 @@ func AlbumInfoQuery(albumID string) (*AlbumInfoStruct, error) {
 func (a *AlbumJSON) insertAlbumJSON() error {
 	// Ensures insertions do not fail during import
 	// If it does, rolls back database
-	var err error
-	tx, err = db.Begin()
+	tx, err := db.Begin()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
-	if err = a.insertAlbum(); err != nil {
+	if err = a.insertAlbum(tx); err != nil {
 		return err
-	} else if err = a.insertArtists(a.ID); err != nil {
+	} else if err = a.insertArtists(tx, a.ID); err != nil {
 		return err
-	} else if err = a.Tracks.insertTracks(a.ID); err != nil {
+	} else if err = a.Tracks.insertTracks(tx, a.ID); err != nil {
 		return err
 	}
 	return tx.Commit()
 }
 
-func (a *AlbumJSON) insertAlbum() error {
+func (a *AlbumJSON) insertAlbum(tx *sql.Tx) error {
 	// Variable Declarations
 	id := a.ID
 	name := a.Name
@@ -233,26 +252,22 @@ func (a *AlbumJSON) insertAlbum() error {
 	return nil
 }
 
-func (a *AlbumJSON) insertArtists(albumID string) error {
+func (a *AlbumJSON) insertArtists(tx *sql.Tx, albumID string) error {
 	for _, artist := range a.Artists {
 		// Variable Declarations
 		artistID := artist.ID
 		artistName := artist.Name
-		artistImage := "" // Might remove
-		followers := 0    // Also might remove
 		artistURL := slices.Collect(maps.Values(artist.ExternalUrls))[0]
 
 		// Create Query
 		artistQuery := `
 			INSERT INTO artists (
-			    artist_id, artist_name, artist_image,
-			    followers, artist_url)
-			VALUES (?, ?, ?, ?, ?)`
+			    artist_id, artist_name, artist_url)
+			VALUES (?, ?, ?)`
 
 		// Execute Query
 		_, err := tx.Exec(artistQuery,
-			artistID, artistName, artistImage,
-			followers, artistURL,
+			artistID, artistName, artistURL,
 		)
 		if err != nil {
 			return err
@@ -278,21 +293,17 @@ func (a *AlbumJSON) insertArtists(albumID string) error {
 			// Variable Declarations
 			artistID := artist.ID
 			artistName := artist.Name
-			artistImage := "" // Might remove
-			followers := 0    // Also might remove
 			artistURL := slices.Collect(maps.Values(artist.ExternalUrls))[0]
 
 			// Create Query
 			artistQuery := `
 			INSERT INTO artists (
-			    artist_id, artist_name, artist_image,
-			    followers, artist_url)
-			VALUES (?, ?, ?, ?, ?)`
+			    artist_id, artist_name, artist_url)
+			VALUES (?, ?, ?)`
 
 			// Execute Query
 			_, err := tx.Exec(artistQuery,
-				artistID, artistName, artistImage,
-				followers, artistURL,
+				artistID, artistName, artistURL,
 			)
 			if err != nil {
 				return err
@@ -303,14 +314,13 @@ func (a *AlbumJSON) insertArtists(albumID string) error {
 	return nil
 }
 
-func (t *TracksWrapper) insertTracks(albumID string) error {
+func (t *TracksWrapper) insertTracks(tx *sql.Tx, albumID string) error {
 	for _, track := range t.Items {
 		// Variable Declarations
 		trackID := track.ID
 		name := track.Name
 		url := slices.Collect(maps.Values(track.ExternalUrls))[0]
 		durationMS := track.DurationMs
-		isrc := ""
 		explicit := track.Explicit
 		trackNumber := track.TrackNumber
 		discNumber := track.DiscNumber
@@ -318,13 +328,13 @@ func (t *TracksWrapper) insertTracks(albumID string) error {
 		// Create Query
 		trackQuery := `
 			INSERT INTO tracks (
-                track_id,  track_name, track_url, duration_ms, isrc, 
+                track_id,  track_name, track_url, duration_ms,
 			    explicit, track_number, disc_number, album_id)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
 		// Execute Query
 		_, err := tx.Exec(trackQuery,
-			trackID, name, url, durationMS, isrc,
+			trackID, name, url, durationMS,
 			explicit, trackNumber, discNumber, albumID)
 		if err != nil {
 			return err

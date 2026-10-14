@@ -7,7 +7,60 @@ import (
 
 var db *sql.DB
 var tmpls *template.Template
-var tx *sql.Tx
+
+const schema = `CREATE TABLE IF NOT EXISTS album_artists (
+    album_id  TEXT REFERENCES albums (album_id) ON DELETE CASCADE
+                   NOT NULL,
+    artist_id TEXT REFERENCES artists (artist_id) 
+                   NOT NULL,
+    PRIMARY KEY (
+        album_id,
+        artist_id
+    )
+    ON CONFLICT IGNORE
+);
+
+CREATE TABLE IF NOT EXISTS albums (
+    album_id     TEXT    PRIMARY KEY,
+    album_name   TEXT,
+    album_type   TEXT,
+    total_tracks INTEGER,
+    duration_ms  INTEGER,
+    album_url    TEXT,
+    album_image  TEXT,
+    release_date TEXT
+);
+
+CREATE TABLE IF NOT EXISTS artist_tracks (
+    artist_id TEXT REFERENCES artists (artist_id) 
+                   NOT NULL,
+    track_id  TEXT REFERENCES tracks (track_id) ON DELETE CASCADE
+                   NOT NULL,
+    PRIMARY KEY (
+        artist_id,
+        track_id
+    )
+    ON CONFLICT IGNORE
+);
+
+CREATE TABLE IF NOT EXISTS artists (
+    artist_id   TEXT PRIMARY KEY
+                     UNIQUE ON CONFLICT IGNORE,
+    artist_name TEXT,
+    artist_url  TEXT
+);
+
+CREATE TABLE IF NOT EXISTS tracks (
+    track_id     TEXT    PRIMARY KEY,
+    track_name   TEXT,
+    track_url    TEXT,
+    duration_ms  INTEGER,
+    explicit     INTEGER,
+    track_number INTEGER,
+    disc_number  INTEGER,
+    album_id     TEXT    REFERENCES albums (album_id) ON DELETE CASCADE
+);
+`
 
 type PageData struct {
 	Albums      []AlbumStruct
