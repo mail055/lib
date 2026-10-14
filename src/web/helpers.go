@@ -1,6 +1,9 @@
 package web
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 func formatAlbumDuration(durationMS int) string {
 	var duration string
@@ -43,4 +46,14 @@ func parseDuration(durationMS int) (int, int, int) {
 	}
 
 	return hours, minutes, seconds
+}
+
+func parseAlbumJSON(input string) (*AlbumJSON, error) {
+	var album AlbumJSON
+
+	if err := json.Unmarshal([]byte(input), &album); err != nil {
+		return nil, err
+	}
+
+	return &album, nil
 }
