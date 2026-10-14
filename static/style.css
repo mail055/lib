@@ -286,3 +286,135 @@ a:hover {
     margin-right: 6px;
     opacity: 0.6;
 }
+
+.toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: #121212;
+    padding: 16px;
+    border-radius: 8px;
+    border: #383838 1px solid;
+}
+
+.add-button {
+    background-color: #383838;
+    border-radius: 4px;
+    border: #383838 1px solid;
+}
+
+.add-button img {
+    width: 80%;
+    margin: 10%;
+}
+
+.add-text {
+    font-size: 30px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.help-text {
+    font-size: 12px;
+    color: white;
+    margin: 16px;
+    line-height: 1.5;
+}
+
+#add-dialog {
+    flex-direction: column;
+    background: linear-gradient(135deg, #262626, #090909);
+    border-radius: 6px;
+    border: #383838 1px solid;
+    width: min(480px, 90vw);
+    height: fit-content;
+    min-height: 0;
+    max-height: 45vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    margin: auto;
+    inset: 0;
+}
+
+#add-dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+#add-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+}
+
+#add-dialog[open],
+#add-dialog[open]::backdrop {
+    animation: fade-in 0.15s ease-out;
+}
+
+.input {
+    background-color: #383838;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+    outline: none;
+    color: white;
+    margin-bottom: 10px;
+    resize: none;
+    height: 25vh;
+    min-height: 120px;
+    padding: 8px;
+}
+
+.input textarea {
+    min-height: 100vh;
+    flex: 1;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    padding: 0 4px 0 4px;
+    gap: 8px;
+}
+
+.cancel {
+    height: 30px;
+    width: auto;
+    flex: 1;
+    background-color: #262626;
+    border: #383838 1px solid ;
+    border-radius: 4px;
+    color: white;
+    transition: 0.15s ease;
+}
+
+.cancel:hover {
+    transition: 0.25s ease;
+    scale: 1.03;
+}
+
+.submit {
+    height: 30px;
+    width: auto;
+    flex: 1;
+    background-color: #264226;
+    border: #387238 1px solid;
+    border-radius: 4px;
+    color: white;
+    transition: 0.15s ease;
+}
+
+.submit:hover {
+    transition: 0.25s ease;
+    scale: 1.03;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
