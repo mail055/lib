@@ -102,6 +102,7 @@ func handleImport(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		msg = fmt.Sprintf("Error parsing album JSON: %v", err)
 	} else {
+		// Check if album already exists in the database
 		exists, err := albumExists(album.ID)
 		if err != nil {
 			msg = fmt.Sprintf("Database error: %v", err)
@@ -114,9 +115,10 @@ func handleImport(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Show notification
 	triggers := map[string]any{
 		"showNotification": msg,
-		"refreshAlbums":    true, // Triggers the sidebar reload
+		"refreshAlbums":    true,
 	}
 
 	if jsonBytes, err := json.Marshal(triggers); err == nil {
@@ -130,11 +132,13 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 	var msg string
 	id := r.PathValue("id")
 
+	// Get the album info
 	info, err := AlbumInfoQuery(id)
 	if err != nil {
 		msg = fmt.Sprintf("Error getting album info: %v", err)
 	}
 
+	// Attempt to delete the album
 	err = deleteAlbum(id)
 	if err != nil {
 		msg = fmt.Sprintf("Error deleting album: %v", err)
@@ -144,7 +148,7 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 		msg = fmt.Sprintf("Album '%s' Successfully Deleted", info.Title)
 	}
 
-	// Trigger notification and sidebar refresh cleanly
+	// Trigger notification
 	triggers := map[string]any{
 		"showNotification": msg,
 		"refreshAlbums":    true,
@@ -154,7 +158,7 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("HX-Trigger", string(jsonBytes))
 	}
 
-	// Clear out content pane (metadata & tracks)
+	// Clear out content
 	emptyData := PageData{}
 	w.Header().Set("Content-Type", "text/html")
 	if err := tmpls.ExecuteTemplate(w, "content", emptyData); err != nil {

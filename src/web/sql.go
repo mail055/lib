@@ -209,6 +209,7 @@ func (a *AlbumJSON) insertAlbumJSON() error {
 	}
 	defer tx.Rollback()
 
+	// Attempts to insert data into each table
 	if err = a.insertAlbum(tx); err != nil {
 		return err
 	} else if err = a.insertArtists(tx, a.ID); err != nil {
@@ -216,6 +217,8 @@ func (a *AlbumJSON) insertAlbumJSON() error {
 	} else if err = a.Tracks.insertTracks(tx, a.ID); err != nil {
 		return err
 	}
+
+	// Commits the transaction if successful
 	return tx.Commit()
 }
 
@@ -369,6 +372,8 @@ func deleteAlbum(albumID string) error {
 	}
 	defer tx.Rollback()
 
+	// Queries to delete any associated information from the album
+	// Also removes any orphaned artists
 	queries := []string{
 		`DELETE FROM artist_tracks WHERE track_id IN (SELECT track_id FROM tracks WHERE album_id = ?)`,
 		`DELETE FROM tracks WHERE album_id = ?`,
@@ -389,6 +394,7 @@ func deleteAlbum(albumID string) error {
 }
 
 func albumExists(albumID string) (bool, error) {
+	// Checks if the album exists
 	var exists bool
 	query := `SELECT EXISTS(SELECT 1 FROM albums WHERE album_id = ?);`
 	err := db.QueryRow(query, albumID).Scan(&exists)
