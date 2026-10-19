@@ -387,3 +387,10 @@ func deleteAlbum(albumID string) error {
 	}
 	return tx.Commit()
 }
+
+func albumExists(albumID string) (bool, error) {
+	var exists bool
+	query := `SELECT EXISTS(SELECT 1 FROM albums WHERE album_id = ?);`
+	err := db.QueryRow(query, albumID).Scan(&exists)
+	return exists, err
+}

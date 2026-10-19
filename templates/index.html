@@ -6,59 +6,71 @@
     <link rel="icon" href="./static/favicon.ico"/>
     <link rel="stylesheet" href="./static/style.css">
     <script src="./static/htmx.min.js" defer></script>
-    <script>
-        document.addEventListener("keydown", function (e) {
-            if (e.key !== "/") return;
-
-            const tag = document.activeElement.tagName;
-            if (tag === "INPUT" || tag === "TEXTAREA" || document.activeElement.isContentEditable) return;
-
-            e.preventDefault();
-            const search = document.querySelector(".search-box");
-            search.focus();
-            search.select();
-        });
-        document.addEventListener("click", function (e) {
-            if (e.target.id === "add-dialog") e.target.close();
-        });
-        document.addEventListener("showNotification", function (e) {
-            const notif = document.getElementById("notification");
-            notif.textContent = e.detail.value;
-            notif.classList.add("show");
-            setTimeout(() => notif.classList.remove("show"), 2500);
-        });
-    </script>
+    <script src="./static/script.js" defer></script>
 </head>
 
 <body>
-    <div class="sidebar">
-        <form class="search-bar"
-              hx-get="/"
-              hx-target="album-results"
-              hx-push-url="true">
-            <input class="search-box"
-                   type="search"
-                   name="q"
-                   placeholder="Search Albums"
-                   autofocus
-                   autocomplete="off"
+    <div class="leftflex">
+        <div class="sidebar">
+            <form class="search-bar"
+                  hx-get="/"
+                  hx-target="album-results"
+                  hx-push-url="true">
+                <input class="search-box"
+                       type="search"
+                       name="q"
+                       placeholder="Search Albums"
+                       autofocus
+                       autocomplete="off"
 
-                   value="{{ .SearchQuery }}"
-                   hx-get="/"
-                   hx-trigger="input changed delay:100ms, search"
-                   hx-target="#album-results"
-                   hx-replace-url="true">
-            <button class="search-icon" type="submit"><img src="./static/search.png" alt=""></button>
-        </form>
+                       value="{{ .SearchQuery }}"
+                       hx-get="/"
+                       hx-trigger="input changed delay:100ms, search"
+                       hx-target="#album-results"
+                       hx-replace-url="true">
+                <button class="search-icon" type="submit"><img src="./static/search.png" alt=""></button>
+            </form>
 
-        <hr class="separator">
-        <div id="album-results">
-            {{ template "album-results" . }}
+            <hr class="separator">
+            <div id="album-results"
+                hx-get="/"
+                hx-trigger="refreshAlbums from:body"
+                hx-include="[name='q']">
+                {{ template "album-results" . }}
+            </div>
         </div>
-        <div class="total-albums">{{ len .Albums }} Albums</div>
+        <div class="toolbar">
+            <img class="logo" src="./static/logo.png" alt="logo.png">
+            <div class="title"><a href="https://github.com/mail055/lib" target="_blank">Lib</a></div>
+            <div class="credit">Powered By Spotify</div>
+
+            <button class="add-button" onclick="document.getElementById('add-dialog').showModal()"><img src="./static/add.png" alt="Add Album"></button>
+
+            <dialog id="add-dialog">
+                <div class="add-text">Add Album</div>
+                <div class="help-text">
+                    1. Copy the desired Album Link from Spotify<br>
+                    2. Navigate <a href="https://www.unchainedmusic.io/tools/spotify-uri-finder/" target="_blank"><u>here</u></a> and paste the link<br>
+                    3. Copy the outputted ID<br>
+                    4. Paste the ID <a href="https://developer.spotify.com/documentation/web-api/reference/get-an-album" target="_blank"><u>here</u></a> and press "Try It"<br>
+                    5. Copy the JSON response, paste it in the text area below</div>
+                <form hx-post="/import"
+                      hx-target="this"
+                      hx-swap="none"
+                      hx-on::after-request="if (event.detail && event.detail.successful) { this.reset(); document.getElementById('add-dialog').close(); }">
+                    <textarea class="input" name="input" autocomplete="off" placeholder="Paste the Spotify album JSON"></textarea>
+                    <div class="buttons">
+                        <button class="cancel" type="button" onclick="this.closest('dialog').close()">Cancel</button>
+                        <button class="submit" type="submit">Add</button>
+                    </div>
+                </form>
+            </dialog>
+        </div>
     </div>
     <div class="content" id="content">
         {{ template "content" . }}
     </div>
+
+    <div id="notification-container" class="notification-container"></div>
 </body>
 </html>

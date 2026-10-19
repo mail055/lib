@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -100,23 +101,63 @@ func handleImport(w http.ResponseWriter, r *http.Request) {
 	album, err := parseAlbumJSON(input)
 	if err != nil {
 		msg = fmt.Sprintf("Error parsing album JSON: %v", err)
-	} else if err = album.insertAlbumJSON(); err != nil {
-		msg = fmt.Sprintf("Error inserting album JSON: %v", err)
 	} else {
-		msg = fmt.Sprintf(`Album "%s" Successfully Imported`, album.Name)
+		exists, err := albumExists(album.ID)
+		if err != nil {
+			msg = fmt.Sprintf("Database error: %v", err)
+		} else if exists {
+			msg = fmt.Sprintf(`Album "%s" is already in your library`, album.Name)
+		} else if err = album.insertAlbumJSON(); err != nil {
+			msg = fmt.Sprintf("Error inserting album: %v", err)
+		} else {
+			msg = fmt.Sprintf(`Album "%s" Successfully Imported`, album.Name)
+		}
 	}
 
-	value := fmt.Sprintf(`{"showNotification": "%s"}`, msg)
-	w.Header().Set("HX-Trigger", value)
-	return
+	triggers := map[string]any{
+		"showNotification": msg,
+		"refreshAlbums":    true, // Triggers the sidebar reload
+	}
+
+	if jsonBytes, err := json.Marshal(triggers); err == nil {
+		w.Header().Set("HX-Trigger", string(jsonBytes))
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func handleDelete(w http.ResponseWriter, r *http.Request) {
+	var msg string
 	id := r.PathValue("id")
 
-	err := deleteAlbum(id)
+	info, err := AlbumInfoQuery(id)
 	if err != nil {
+		msg = fmt.Sprintf("Error getting album info: %v", err)
+	}
+
+	err = deleteAlbum(id)
+	if err != nil {
+		msg = fmt.Sprintf("Error deleting album: %v", err)
+	}
+
+	if info != nil {
+		msg = fmt.Sprintf("Album '%s' Successfully Deleted", info.Title)
+	}
+
+	// Trigger notification and sidebar refresh cleanly
+	triggers := map[string]any{
+		"showNotification": msg,
+		"refreshAlbums":    true,
+	}
+
+	if jsonBytes, err := json.Marshal(triggers); err == nil {
+		w.Header().Set("HX-Trigger", string(jsonBytes))
+	}
+
+	// Clear out content pane (metadata & tracks)
+	emptyData := PageData{}
+	w.Header().Set("Content-Type", "text/html")
+	if err := tmpls.ExecuteTemplate(w, "content", emptyData); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 }
