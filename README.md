@@ -9,7 +9,8 @@ Navigate to the directory where you would like the application to be stored and 
 # Clone the repository
 git clone 'github.com/mail055/lib'
 # Ensure you have a Go Interpreter installed on your device
-go run src/main.go
+go mod download # Installs neccessary packages
+go run src/main.go # Runs the application
 
 # You may also run:
 go run src/main.go -terminal # For the Terminal UI

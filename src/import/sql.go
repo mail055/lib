@@ -6,7 +6,7 @@ import (
 	"maps"
 	"slices"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 var db *sql.DB
@@ -15,7 +15,7 @@ func initDB() {
 	var err error
 
 	// Establishes the databases connection
-	db, err = sql.Open("sqlite3", "./data.db")
+	db, err = sql.Open("sqlite", "./data.db")
 	if err != nil {
 		log.Fatal(err)
 	}
