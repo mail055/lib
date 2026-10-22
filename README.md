@@ -7,7 +7,9 @@ A Fast, Self-Hosted, Spotify-Like Library Interface written in Go
 Navigate to the directory where you would like the application to be stored and perform:
 ```bash
 # Clone the repository
-git clone 'github.com/mail055/lib'
+git clone "https://github.com/mail055/lib"
+# Change directory into the new folder
+cd lib
 # Ensure you have a Go Interpreter installed on your device
 go mod download # Installs neccessary packages
 go run src/main.go # Runs the application
